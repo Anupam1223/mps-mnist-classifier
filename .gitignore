@@ -1,0 +1,31 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Virtual environments
+env/
+venv/
+
+# PyTorch/torchvision cache
+~/.torch/
+
+# Dataset download
+data/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+
+# Python environment
+*.egg-info/
+*.egg
+*.pkl
+*.h5
+
+# VSCode settings (if using)
+.vscode/
