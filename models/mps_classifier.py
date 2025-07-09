@@ -16,11 +16,15 @@ class MPSClassifier(nn.Module):
             self.cores.append(core)
 
         self.fc = nn.Linear(1, output_dim)
+        nn.init.xavier_uniform_(self.fc.weight)
 
     def forward(self, x):
         B = x.shape[0]
         x = x.view(B, -1)
-        x_stack = torch.stack([1 - x, x], dim=-1)
+
+        x_stack = torch.stack([1 - x, x], dim=-1)  # No binarization
+
+
 
         result = None
         for i in range(self.input_dim):
