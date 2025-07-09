@@ -31,3 +31,14 @@ def train(model, dataloader, optimizer, loss_fn, epochs=5, device='cpu', use_amp
 
         duration = time.time() - start
         print(f"Epoch {epoch+1} complete in {duration:.2f}s. Avg Loss: {total_loss/len(dataloader):.4f}")
+
+def evaluate(model, dataloader, device):
+    model.eval()
+    correct = total = 0
+    with torch.no_grad():
+        for x, y in dataloader:
+            x, y = x.to(device), y.to(device)
+            preds = torch.argmax(model(x), dim=1)
+            correct += (preds == y).sum().item()
+            total += y.size(0)
+    print(f"Test Accuracy: {correct / total * 100:.2f}%")

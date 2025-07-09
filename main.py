@@ -1,7 +1,7 @@
 import torch
 from data.load_mnist import get_mnist_loaders
 from models.mps_classifier import MPSClassifier
-from training.train_model import train
+from training.train_model import train, evaluate
 from utils.visualization import plot_sample_images
 
 # Setup device
@@ -13,8 +13,8 @@ print(f"Using device: {device}")
 train_loader, test_loader = get_mnist_loaders(batch_size=64, resize=8)
 
 # Step 2: Create MPS model (input_dim = 8x8 = 64, bond_dim = 5)
-model = MPSClassifier(input_dim=64, output_dim=10, bond_dim=20).to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+model = MPSClassifier(input_dim=64, output_dim=10, bond_dim=40).to(device)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 loss_fn = torch.nn.CrossEntropyLoss()
 
 print(f"Total trainable parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad)}")
@@ -35,7 +35,8 @@ for i in range(100):
 
 print("\n[Training Full Dataset]")
 # Step 3: Train with AMP if available
-train(model, train_loader, optimizer, loss_fn, epochs=5, device=device, use_amp=use_amp)
+train(model, train_loader, optimizer, loss_fn, epochs=10, device=device, use_amp=use_amp)
+evaluate(model, test_loader, device)
 
 # Step 4: Evaluate and visualize
 model.eval()
@@ -49,3 +50,4 @@ with torch.no_grad():
 
 # Step 5: Visualize predictions (move to CPU)
 plot_sample_images(test_images[:5].cpu(), test_labels[:5].cpu(), preds[:5].cpu())
+
