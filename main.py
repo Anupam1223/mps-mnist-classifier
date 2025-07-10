@@ -10,10 +10,10 @@ use_amp = torch.cuda.is_available()
 print(f"Using device: {device}")
 
 # Step 1: Load resized data
-train_loader, test_loader = get_mnist_loaders(batch_size=64, resize=8)
+train_loader, test_loader = get_mnist_loaders(batch_size=64)
 
-# Step 2: Create MPS model (input_dim = 8x8 = 64, bond_dim = 5)
-model = MPSClassifier(input_dim=64, output_dim=10, bond_dim=40).to(device)
+# Step 2: Create MPS model (input_dim = 28x28 = 784, bond_dim = 5)
+model = MPSClassifier(input_dim=784, output_dim=10, bond_dim=10).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 loss_fn = torch.nn.CrossEntropyLoss()
 
@@ -25,6 +25,7 @@ print("\n[Sanity Check] Trying to overfit on one batch...")
 batch_x, batch_y = next(iter(train_loader))
 batch_x, batch_y = batch_x.to(device), batch_y.to(device)
 
+
 for i in range(100):
     optimizer.zero_grad()
     out = model(batch_x)
@@ -35,7 +36,7 @@ for i in range(100):
 
 print("\n[Training Full Dataset]")
 # Step 3: Train with AMP if available
-train(model, train_loader, optimizer, loss_fn, epochs=10, device=device, use_amp=use_amp)
+train(model, train_loader, optimizer, loss_fn, epochs=5, device=device, use_amp=use_amp)
 evaluate(model, test_loader, device)
 
 # Step 4: Evaluate and visualize

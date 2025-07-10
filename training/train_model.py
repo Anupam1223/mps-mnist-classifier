@@ -2,6 +2,18 @@ import torch
 from tqdm import tqdm
 import time
 
+def pixel_feature_map(x, d_feature=2):
+    """
+    Feature maps MNIST pixels [0–1] into a 2D vector using sine and cosine mapping.
+    Input: (B, 1, 8, 8)
+    Output: (B, 64, d_feature)
+    """
+    x = x.view(x.size(0), -1)  # Flatten to (B, 64)
+    return torch.stack([
+        torch.cos(torch.pi * x),
+        torch.sin(torch.pi * x)
+    ], dim=-1)  # (B, 64, 2)
+
 def train(model, dataloader, optimizer, loss_fn, epochs=5, device='cpu', use_amp=True):
     scaler = torch.cuda.amp.GradScaler() if use_amp else None
 
@@ -25,6 +37,7 @@ def train(model, dataloader, optimizer, loss_fn, epochs=5, device='cpu', use_amp
                 out = model(batch_x)
                 loss = loss_fn(out, batch_y)
                 loss.backward()
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
                 optimizer.step()
 
             total_loss += loss.item()
