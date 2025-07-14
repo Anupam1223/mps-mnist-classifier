@@ -1,3 +1,4 @@
+# utils/visualization.py
 import matplotlib.pyplot as plt
 import torch
 
@@ -10,8 +11,10 @@ def plot_sample_images(images, labels, preds=None):
         preds = preds.cpu().numpy()
 
     fig, axes = plt.subplots(1, len(images), figsize=(12, 3))
+    NEW_IMAGE_SIZE = 8
     for i, ax in enumerate(axes):
-        ax.imshow(images[i].reshape(8, 8), cmap="gray")
+        # Reshape for 28x28 visualization
+        ax.imshow(images[i].reshape(NEW_IMAGE_SIZE, NEW_IMAGE_SIZE), cmap="gray")
         title = f"Label: {labels[i]}"
         if preds is not None:
             title += f"\nPred: {preds[i]}"
